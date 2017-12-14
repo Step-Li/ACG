@@ -3,9 +3,12 @@ var circle_being_moved = null;
 var cX = 0;
 var cY = 0;
 
+var lines;
+var stage;
+
 function init() {
 	console.info("initialized");
-	var stage = new createjs.Stage("game");
+	stage = new createjs.Stage("game");
 	createjs.Ticker.framerate = 30;
 	createjs.Ticker.timingMode =
 			createjs.Ticker.RAF_SYNCHED;  
@@ -14,6 +17,10 @@ function init() {
 		stage
 	);
 	
+	lines = createGraph(stage);
+}
+
+function createGraph(stage) {
 	var bg = new createjs.Shape();
 	stage.addChild(bg);
 	bg.graphics
@@ -22,9 +29,9 @@ function init() {
 	bg.x = 250;
 	bg.y = 150;
 	
-	n = getRandomInt(8, 14);
+	n = getRandomInt(10, 18);
 	
-	var matrix = createGraph(n);
+	var matrix = createMatrix(n);
 	var pLoc = createLocations(n);
 	var circles = new Array();
 	for(var i = 0; i < n; i++) {
@@ -111,6 +118,7 @@ function init() {
 		}
 	);
 	stage.update(); 
+	return lines;
 }
 
 function checkEnd(lines, stage) {
@@ -130,19 +138,29 @@ function checkEnd(lines, stage) {
 	endOfGame(stage);
 	return true;
 }
+
 var img = new Image();
 img.src = "bg.jpg";
+var winBg;
 
 function endOfGame(stage) {
 	console.info('Win');
-	var bg = new createjs.Shape();
-	stage.addChild(bg);
-	bg.graphics
+	winBg = new createjs.Shape();
+	stage.addChild(winBg);
+	winBg.graphics
 		.beginBitmapFill(img) 
 		.drawRect(-250, -150, 500, 300);
-	bg.x = 250;
-	bg.y = 150;
-	
+	winBg.x = 250;
+	winBg.y = 150;
+	stage.update();
+	stage.addEventListener('stagemouseup', deleteStage);
+}
+
+function deleteStage(event) {
+	stage.removeAllChildren();
+	stage.removeAllEventListeners();
+	lines = createGraph(stage);
+	stage.update();
 }
 
 function checkLines(lines) {
@@ -187,7 +205,7 @@ function checkCross(line1, line2) {
 	
 }
 
-function createGraph(n) {
+function createMatrix(n) {
 	var matrix = new Array();
     for(var i = 0; i < n; i++) {
 		matrix[i] = new Array();
