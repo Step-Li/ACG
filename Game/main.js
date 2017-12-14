@@ -14,15 +14,15 @@ function init() {
 		stage
 	);
 	
-	/*var bg = new createjs.Shape();
+	var bg = new createjs.Shape();
 	stage.addChild(bg);
 	bg.graphics
-		.beginFill("LightCyan") //цвет
+		.beginFill("White") 
 		.drawRect(-250, -150, 500, 300);
 	bg.x = 250;
-	bg.y = 150;*/
+	bg.y = 150;
 	
-	n = 10;
+	n = getRandomInt(8, 14);
 	
 	var matrix = createGraph(n);
 	var pLoc = createLocations(n);
@@ -83,7 +83,7 @@ function init() {
 		function() {
 			circle_being_moved = null;
 			console.info("pressup");
-			checkEnd(lines);
+			checkEnd(lines, stage);
 		}
 	);
 	stage.addEventListener(
@@ -95,7 +95,6 @@ function init() {
 				checkLines(lines);
 				lines.forEach(function(item, i, lines) {
 					var g = item.shape.graphics;
-					console.info("!!!");
 					g.clear();
 					g.setStrokeStyle(3);
 					if (item.crossed) {
@@ -114,7 +113,7 @@ function init() {
 	stage.update(); 
 }
 
-function checkEnd(lines) {
+function checkEnd(lines, stage) {
 	for(var i = 0; i < lines.length; i++){
 		for(var j = 0; j < lines.length; j++){
 			var onePoint = lines[i].point1 == lines[j].point1 ||
@@ -128,12 +127,22 @@ function checkEnd(lines) {
 			}			
 		}
 	}
-	endOfGame();
+	endOfGame(stage);
 	return true;
 }
+var img = new Image();
+img.src = "bg.jpg";
 
-function endOfGame() {
+function endOfGame(stage) {
 	console.info('Win');
+	var bg = new createjs.Shape();
+	stage.addChild(bg);
+	bg.graphics
+		.beginBitmapFill(img) 
+		.drawRect(-250, -150, 500, 300);
+	bg.x = 250;
+	bg.y = 150;
+	
 }
 
 function checkLines(lines) {
@@ -191,7 +200,7 @@ function createGraph(n) {
 		matrix[i][j] = 1;
 		matrix[j][i] = 1;
 	}
-	var r = getRandomInt(1.5 * n, 2 * n);
+	var r = getRandomInt(1 * n, 1.5 * n);
 	for(var i = 1; i < r; i++) {
 		x = getRandomInt(0, n);
 		y = getRandomInt(0, n);
